@@ -1,0 +1,66 @@
+
+Program : Write a Python program to store first year percentage of students in array. 
+Write function for sorting array of floating point numbers in ascending order using quick sort and display top five scores.
+
+
+-*-*-CODE-*-*-
+
+arr=[]
+n=int(input("Enter number of students : "))
+for i in range (0,n):
+    ele=int(input("Enter Percentage of Student : "))
+    arr.append(ele)
+print("Percentage of students : ",arr)
+
+def partition(arr,low,high):
+    i = ( low-1 )
+    pivot = arr[high]
+    for j in range(low , high):
+        if arr[j] <= pivot:
+            i = i+1
+            arr[i],arr[j] = arr[j],arr[i]
+    arr[i+1],arr[high] = arr[high],arr[i+1]
+    return ( i+1 )
+def quickSort(arr,low,high):
+    if low < high:
+        pi = partition(arr,low,high)
+        quickSort(arr, low, pi-1)
+        quickSort(arr, pi+1, high)
+
+m = len(arr)
+quickSort(arr,0,m-1)
+print ("Sorted array is:")
+for i in range(m):
+    print (arr[i],end=" ")
+    
+print("\nTop 5 Percentage are : ")
+for i in range(m-5,m):
+    print("%.2f"%arr[i])
+
+
+-*-*-OUTPUT-*-*-
+
+Enter number of students : 10
+
+Enter Percentage of Student : 56
+Enter Percentage of Student : 89
+Enter Percentage of Student : 75
+Enter Percentage of Student : 77
+Enter Percentage of Student : 86
+Enter Percentage of Student : 83
+Enter Percentage of Student : 59
+Enter Percentage of Student : 95
+Enter Percentage of Student : 90
+Enter Percentage of Student : 65
+
+Percentage of students :  [56, 89, 75, 77, 86, 83, 59, 95, 90, 65]
+
+Sorted array is:
+56 59 65 75 77 83 86 89 90 95 
+
+Top 5 Percentage are : 
+83.00
+86.00
+89.00
+90.00
+95.00

@@ -1,0 +1,443 @@
+Program : The ticket booking system of Cinemax theater has to be implemented using C++ program. There are 10 rows and 7 seats in each row. Doubly circular linked list has to be maintained to keep track of free seats at rows.
+Assume some random booking to start with. Use array to store pointer (Head pointer) to each row. On demand
+a) The list of available seats is to be displayed
+b) The seats are to be booked
+c) The booking can be cancelled.
+
+
+-*-*-CODE-*-*-
+
+#include<iostream>
+using namespace std;
+struct node
+{
+    int seatc,seatr;
+    string status;
+    struct node *next ,*prev;
+}*head[10],*last[10];
+class ticket
+{
+public:
+    ticket()
+    {
+        for(int j=0 ; j<7 ; j++)
+        {
+            head[j]=last[j]=NULL;
+            struct node* temp;
+            for(int i=1 ; i<=10 ; i++)
+            {
+                temp=create_node(i,j+1);
+                if(head[j]==last[j] && head[j]==NULL)
+                {
+                    head[j]=last[j]=temp;
+                    head[j]->next=last[j]->next=NULL;
+                    head[j]->prev=last[j]->prev=NULL;
+                }
+                else
+                {
+                    temp->next=head[j];
+                    head[j]->prev=temp;
+                    head[j]=temp;
+                    head[j]->prev=last[j];
+                    last[j]->next=head[j];
+                }
+            }
+        }
+    }
+    node* create_node(int x,int y)
+    {
+        struct node*temp;
+        temp=new(struct node);
+        if(temp==NULL)
+        {
+            cout<<"\nMemory not allocated.";
+            return 0;
+        }
+        else
+        {
+            temp->seatc=x;
+            temp->seatr=y;
+            temp->status="A";
+            temp->next=NULL;
+            temp->prev=NULL;
+            return temp;
+        }
+    }
+    void book()
+    {
+        int x,y;
+        cout<<"\nEnter row and column you want to book : ";
+        cin>>x>>y;
+        struct node* temp;
+        temp=head[x-1];
+        for(int i=0 ; i<10 ; i++)
+        {
+            if(temp->seatc==y)
+            {
+                if(temp->status=="A")
+                {
+                    temp->status="B";
+                }
+                else
+                {
+                    cout<<"\nSORRY !! Seat already booked."<<endl;
+                }
+            }
+            temp=temp->next;
+        }
+        display();
+    }
+    void cancel()
+    {
+        int x,y;
+        cout<<"\nEnter row and column to cancel booking : ";
+        cin>>x>>y;
+        struct node* temp;
+        temp=head[x-1];
+        for(int i=0 ; i<10 ; i++)
+        {   
+            if(temp->seatc==y)
+            {
+                if(temp->status=="B")
+                {
+                    temp->status="A";
+                }
+                else
+                { 
+                    cout<<"\nSORRY !! Seat already unbooked."<<endl;
+                }
+            }
+            temp=temp->next;
+        }
+        display();
+    }
+    void display()
+    {
+        struct node* temp;
+        for(int j=0 ; j<7 ; j++)
+        {
+            temp=head[j];
+            for(int i=0 ; i<10 ; i++)
+            {
+                cout<<temp->seatr<<","<<temp->seatc;
+                cout<<""<<temp->status<<"\t";
+                temp=temp->next;
+            }
+            cout<<"\n";
+        }
+    }
+};
+
+int main()
+{
+    ticket t;
+    int ch;
+    t.display();
+    do
+    {
+        cout<<"\n1.Book Ticket \n2.Cancel Booking  \n3.EXIT"<<endl;
+        cout<<"Enter your choice : ";
+        cin>>ch;
+        switch(ch)
+        {
+            case 1:
+                t.book();
+                break;
+            case 2:
+                t.cancel();
+                break;
+        }
+    }while(ch!=3);
+return 0;
+}
+
+
+-*-*-OUTPUT-*-*-
+
+1,10A   1,9A    1,8A    1,7A    1,6A    1,5A    1,4A    1,3A    1,2A    1,1A                                                                  
+2,10A   2,9A    2,8A    2,7A    2,6A    2,5A    2,4A    2,3A    2,2A    2,1A                                                                  
+3,10A   3,9A    3,8A    3,7A    3,6A    3,5A    3,4A    3,3A    3,2A    3,1A                                                                  
+4,10A   4,9A    4,8A    4,7A    4,6A    4,5A    4,4A    4,3A    4,2A    4,1A                                                                  
+5,10A   5,9A    5,8A    5,7A    5,6A    5,5A    5,4A    5,3A    5,2A    5,1A                                                                  
+6,10A   6,9A    6,8A    6,7A    6,6A    6,5A    6,4A    6,3A    6,2A    6,1A                                                                  
+7,10A   7,9A    7,8A    7,7A    7,6A    7,5A    7,4A    7,3A    7,2A    7,1A                                                                  
+                                                                                                                                              
+1.Book Ticket                                                                                                                                 
+2.Cancel Booking                                                                                                                              
+3.EXIT                                                                                                                                        
+Enter your choice : 1                                                                                                                         
+                                                                                                                                              
+Enter row and column you want to book : 1 1                                                                                                   
+1,10A   1,9A    1,8A    1,7A    1,6A    1,5A    1,4A    1,3A    1,2A    1,1B                                                                  
+2,10A   2,9A    2,8A    2,7A    2,6A    2,5A    2,4A    2,3A    2,2A    2,1A                                                                  
+3,10A   3,9A    3,8A    3,7A    3,6A    3,5A    3,4A    3,3A    3,2A    3,1A                                                                  
+4,10A   4,9A    4,8A    4,7A    4,6A    4,5A    4,4A    4,3A    4,2A    4,1A                                                                  
+5,10A   5,9A    5,8A    5,7A    5,6A    5,5A    5,4A    5,3A    5,2A    5,1A                                                                  
+6,10A   6,9A    6,8A    6,7A    6,6A    6,5A    6,4A    6,3A    6,2A    6,1A                                                                  
+7,10A   7,9A    7,8A    7,7A    7,6A    7,5A    7,4A    7,3A    7,2A    7,1A                                                                  
+                                                                                                                                              
+1.Book Ticket                                                                                                                                   
+2.Cancel Booking                                                                                                                                
+3.EXIT                                                                                                                                          
+Enter your choice : 1                                                                                                                           
+                                                                                                                                                
+Enter row and column you want to book : 2 2                                                                                                     
+1,10A   1,9A    1,8A    1,7A    1,6A    1,5A    1,4A    1,3A    1,2A    1,1B                                                                    
+2,10A   2,9A    2,8A    2,7A    2,6A    2,5A    2,4A    2,3A    2,2B    2,1A                                                                    
+3,10A   3,9A    3,8A    3,7A    3,6A    3,5A    3,4A    3,3A    3,2A    3,1A                                                                    
+4,10A   4,9A    4,8A    4,7A    4,6A    4,5A    4,4A    4,3A    4,2A    4,1A                                                                    
+5,10A   5,9A    5,8A    5,7A    5,6A    5,5A    5,4A    5,3A    5,2A    5,1A                                                                    
+6,10A   6,9A    6,8A    6,7A    6,6A    6,5A    6,4A    6,3A    6,2A    6,1A                                                                    
+7,10A   7,9A    7,8A    7,7A    7,6A    7,5A    7,4A    7,3A    7,2A    7,1A                                                                    
+                                                                                                                                                
+1.Book Ticket                                                                                                                                   
+2.Cancel Booking                                                                                                                                
+3.EXIT                                                                                                                                          
+Enter your choice : 1                                                                                                                           
+                                                                                                                                                
+Enter row and column you want to book : 3 3                                                                                                     
+1,10A   1,9A    1,8A    1,7A    1,6A    1,5A    1,4A    1,3A    1,2A    1,1B                                                                    
+2,10A   2,9A    2,8A    2,7A    2,6A    2,5A    2,4A    2,3A    2,2B    2,1A                                                                    
+3,10A   3,9A    3,8A    3,7A    3,6A    3,5A    3,4A    3,3B    3,2A    3,1A                                                                    
+4,10A   4,9A    4,8A    4,7A    4,6A    4,5A    4,4A    4,3A    4,2A    4,1A                                                                    
+5,10A   5,9A    5,8A    5,7A    5,6A    5,5A    5,4A    5,3A    5,2A    5,1A                                                                    
+6,10A   6,9A    6,8A    6,7A    6,6A    6,5A    6,4A    6,3A    6,2A    6,1A                                                                    
+7,10A   7,9A    7,8A    7,7A    7,6A    7,5A    7,4A    7,3A    7,2A    7,1A                                                                    
+                                                                                                                                                
+1.Book Ticket                                                                                                                                   
+2.Cancel Booking                                                                                                                                
+3.EXIT                                                                                                                                          
+Enter your choice : 1                                                                                                                                        
+                                                                                                                                                
+Enter row and column you want to book : 4 4                                                                                                     
+1,10A   1,9A    1,8A    1,7A    1,6A    1,5A    1,4A    1,3A    1,2A    1,1B                                                                    
+2,10A   2,9A    2,8A    2,7A    2,6A    2,5A    2,4A    2,3A    2,2B    2,1A                                                                    
+3,10A   3,9A    3,8A    3,7A    3,6A    3,5A    3,4A    3,3B    3,2A    3,1A                                                                    
+4,10A   4,9A    4,8A    4,7A    4,6A    4,5A    4,4B    4,3A    4,2A    4,1A                                                                    
+5,10A   5,9A    5,8A    5,7A    5,6A    5,5A    5,4A    5,3A    5,2A    5,1A                                                                    
+6,10A   6,9A    6,8A    6,7A    6,6A    6,5A    6,4A    6,3A    6,2A    6,1A                                                                    
+7,10A   7,9A    7,8A    7,7A    7,6A    7,5A    7,4A    7,3A    7,2A    7,1A                                                                    
+                                                                                                                                                
+1.Book Ticket                                                                                                                                   
+2.Cancel Booking                                                                                                                                
+3.EXIT                                                                                                                                          
+Enter your choice : 1                                                                                                                           
+                                                                                                                                                
+Enter row and column you want to book : 5 5                                                                                                     
+1,10A   1,9A    1,8A    1,7A    1,6A    1,5A    1,4A    1,3A    1,2A    1,1B                                                                    
+2,10A   2,9A    2,8A    2,7A    2,6A    2,5A    2,4A    2,3A    2,2B    2,1A                                                                    
+3,10A   3,9A    3,8A    3,7A    3,6A    3,5A    3,4A    3,3B    3,2A    3,1A                                                                    
+4,10A   4,9A    4,8A    4,7A    4,6A    4,5A    4,4B    4,3A    4,2A    4,1A                                                                    
+5,10A   5,9A    5,8A    5,7A    5,6A    5,5B    5,4A    5,3A    5,2A    5,1A                                                                    
+6,10A   6,9A    6,8A    6,7A    6,6A    6,5A    6,4A    6,3A    6,2A    6,1A                                                                    
+7,10A   7,9A    7,8A    7,7A    7,6A    7,5A    7,4A    7,3A    7,2A    7,1A                                                                    
+                                                                                                                                                
+1.Book Ticket                                                                                                                                   
+2.Cancel Booking                                                                                                                                
+3.EXIT                                                                                                                                          
+Enter your choice : 1
+                                                                                                                                                
+Enter row and column you want to book : 6 6                                                                                                     
+1,10A   1,9A    1,8A    1,7A    1,6A    1,5A    1,4A    1,3A    1,2A    1,1B                                                                    
+2,10A   2,9A    2,8A    2,7A    2,6A    2,5A    2,4A    2,3A    2,2B    2,1A                                                                    
+3,10A   3,9A    3,8A    3,7A    3,6A    3,5A    3,4A    3,3B    3,2A    3,1A                                                                    
+4,10A   4,9A    4,8A    4,7A    4,6A    4,5A    4,4B    4,3A    4,2A    4,1A                                                                    
+5,10A   5,9A    5,8A    5,7A    5,6A    5,5B    5,4A    5,3A    5,2A    5,1A                                                                    
+6,10A   6,9A    6,8A    6,7A    6,6B    6,5A    6,4A    6,3A    6,2A    6,1A                                                                    
+7,10A   7,9A    7,8A    7,7A    7,6A    7,5A    7,4A    7,3A    7,2A    7,1A                                                                    
+                                                                                                                                                
+1.Book Ticket                                                                                                                                   
+2.Cancel Booking                                                                                                                                
+3.EXIT                                                                                                                                          
+Enter your choice : 1                                                                                                                           
+                                                                                                                                                
+Enter row and column you want to book : 7 7                                                                                                     
+1,10A   1,9A    1,8A    1,7A    1,6A    1,5A    1,4A    1,3A    1,2A    1,1B                                                                    
+2,10A   2,9A    2,8A    2,7A    2,6A    2,5A    2,4A    2,3A    2,2B    2,1A                                                                    
+3,10A   3,9A    3,8A    3,7A    3,6A    3,5A    3,4A    3,3B    3,2A    3,1A                                                                    
+4,10A   4,9A    4,8A    4,7A    4,6A    4,5A    4,4B    4,3A    4,2A    4,1A                                                                    
+5,10A   5,9A    5,8A    5,7A    5,6A    5,5B    5,4A    5,3A    5,2A    5,1A                                                                    
+6,10A   6,9A    6,8A    6,7A    6,6B    6,5A    6,4A    6,3A    6,2A    6,1A                                                                    
+7,10A   7,9A    7,8A    7,7B    7,6A    7,5A    7,4A    7,3A    7,2A    7,1A                                                                    
+                                                                                                                                                
+1.Book Ticket                                                                                                                                   
+2.Cancel Booking                                                                                                                                
+3.EXIT                                                                                                                                          
+Enter your choice : 1
+
+Enter row and column you want to book : 6 8
+1,10A   1,9A    1,8A    1,7A    1,6A    1,5A    1,4A    1,3A    1,2A    1,1B                                                                    
+2,10A   2,9A    2,8A    2,7A    2,6A    2,5A    2,4A    2,3A    2,2B    2,1A                                                                    
+3,10A   3,9A    3,8A    3,7A    3,6A    3,5A    3,4A    3,3B    3,2A    3,1A                                                                    
+4,10A   4,9A    4,8A    4,7A    4,6A    4,5A    4,4B    4,3A    4,2A    4,1A                                                                    
+5,10A   5,9A    5,8A    5,7A    5,6A    5,5B    5,4A    5,3A    5,2A    5,1A                                                                    
+6,10A   6,9A    6,8B    6,7A    6,6B    6,5A    6,4A    6,3A    6,2A    6,1A                                                                    
+7,10A   7,9A    7,8A    7,7B    7,6A    7,5A    7,4A    7,3A    7,2A    7,1A                                                                    
+                                                                                                                                                
+1.Book Ticket                                                                                                                                   
+2.Cancel Booking                                                                                                                                
+3.EXIT                                                                                                                                          
+Enter your choice : 1                                                                                                                           
+                                                                                                                                                
+Enter row and column you want to book : 5 9                                                                                                     
+1,10A   1,9A    1,8A    1,7A    1,6A    1,5A    1,4A    1,3A    1,2A    1,1B                                                                    
+2,10A   2,9A    2,8A    2,7A    2,6A    2,5A    2,4A    2,3A    2,2B    2,1A                                                                    
+3,10A   3,9A    3,8A    3,7A    3,6A    3,5A    3,4A    3,3B    3,2A    3,1A                                                                    
+4,10A   4,9A    4,8A    4,7A    4,6A    4,5A    4,4B    4,3A    4,2A    4,1A                                                                    
+5,10A   5,9B    5,8A    5,7A    5,6A    5,5B    5,4A    5,3A    5,2A    5,1A                                                                    
+6,10A   6,9A    6,8B    6,7A    6,6B    6,5A    6,4A    6,3A    6,2A    6,1A                                                                    
+7,10A   7,9A    7,8A    7,7B    7,6A    7,5A    7,4A    7,3A    7,2A    7,1A                                                                    
+                                                                                                                                                
+1.Book Ticket                                                                                                                                   
+2.Cancel Booking                                                                                                                                
+3.EXIT                                                                                                                                          
+Enter your choice : 1                                                                                                                           
+                                                                                                                                                
+Enter row and column you want to book : 4 10                                                                                                    
+1,10A   1,9A    1,8A    1,7A    1,6A    1,5A    1,4A    1,3A    1,2A    1,1B                                                                    
+2,10A   2,9A    2,8A    2,7A    2,6A    2,5A    2,4A    2,3A    2,2B    2,1A                                                                    
+3,10A   3,9A    3,8A    3,7A    3,6A    3,5A    3,4A    3,3B    3,2A    3,1A                                                                    
+4,10B   4,9A    4,8A    4,7A    4,6A    4,5A    4,4B    4,3A    4,2A    4,1A                                                                    
+5,10A   5,9B    5,8A    5,7A    5,6A    5,5B    5,4A    5,3A    5,2A    5,1A                                                                    
+6,10A   6,9A    6,8B    6,7A    6,6B    6,5A    6,4A    6,3A    6,2A    6,1A                                                                    
+7,10A   7,9A    7,8A    7,7B    7,6A    7,5A    7,4A    7,3A    7,2A    7,1A 
+                                                                                                                                                
+1.Book Ticket                                                                                                                                   
+2.Cancel Booking                                                                                                                                
+3.EXIT                                                                                                                                          
+Enter your choice : 1                                                                                                                           
+                                                                                                                                                
+Enter row and column you want to book : 7 1                                                                                                     
+1,10A   1,9A    1,8A    1,7A    1,6A    1,5A    1,4A    1,3A    1,2A    1,1B                                                                    
+2,10A   2,9A    2,8A    2,7A    2,6A    2,5A    2,4A    2,3A    2,2B    2,1A                                                                    
+3,10A   3,9A    3,8A    3,7A    3,6A    3,5A    3,4A    3,3B    3,2A    3,1A                                                                    
+4,10B   4,9A    4,8A    4,7A    4,6A    4,5A    4,4B    4,3A    4,2A    4,1A                                                                    
+5,10A   5,9B    5,8A    5,7A    5,6A    5,5B    5,4A    5,3A    5,2A    5,1A                                                                    
+6,10A   6,9A    6,8B    6,7A    6,6B    6,5A    6,4A    6,3A    6,2A    6,1A                                                                    
+7,10A   7,9A    7,8A    7,7B    7,6A    7,5A    7,4A    7,3A    7,2A    7,1B                                                                    
+                                                                                                                                                
+1.Book Ticket                                                                                                                                   
+2.Cancel Booking                                                                                                                                
+3.EXIT                                                                                                                                          
+Enter your choice : 1                                                                                                                           
+                                                                                                                                                
+Enter row and column you want to book : 5 4                                                                                                     
+1,10A   1,9A    1,8A    1,7A    1,6A    1,5A    1,4A    1,3A    1,2A    1,1B                                                                    
+2,10A   2,9A    2,8A    2,7A    2,6A    2,5A    2,4A    2,3A    2,2B    2,1A                                                                    
+3,10A   3,9A    3,8A    3,7A    3,6A    3,5A    3,4A    3,3B    3,2A    3,1A                                                                    
+4,10B   4,9A    4,8A    4,7A    4,6A    4,5A    4,4B    4,3A    4,2A    4,1A                                                                    
+5,10A   5,9B    5,8A    5,7A    5,6A    5,5B    5,4B    5,3A    5,2A    5,1A                                                                    
+6,10A   6,9A    6,8B    6,7A    6,6B    6,5A    6,4A    6,3A    6,2A    6,1A                                                                    
+7,10A   7,9A    7,8A    7,7B    7,6A    7,5A    7,4A    7,3A    7,2A    7,1B                                                                    
+                                                                                                                                                
+1.Book Ticket                                                                                                                                   
+2.Cancel Booking                                                                                                                                
+3.EXIT
+Enter your choice : 1                                                                                                                           
+                                                                                                                                                
+Enter row and column you want to book : 6 7                                                                                                     
+1,10A   1,9A    1,8A    1,7A    1,6A    1,5A    1,4A    1,3A    1,2A    1,1B                                                                    
+2,10A   2,9A    2,8A    2,7A    2,6A    2,5A    2,4A    2,3A    2,2B    2,1A                                                                    
+3,10A   3,9A    3,8A    3,7A    3,6A    3,5A    3,4A    3,3B    3,2A    3,1A                                                                    
+4,10B   4,9A    4,8A    4,7A    4,6A    4,5A    4,4B    4,3A    4,2A    4,1A                                                                    
+5,10A   5,9B    5,8A    5,7A    5,6A    5,5B    5,4B    5,3A    5,2A    5,1A                                                                    
+6,10A   6,9A    6,8B    6,7B    6,6B    6,5A    6,4A    6,3A    6,2A    6,1A                                                                    
+7,10A   7,9A    7,8A    7,7B    7,6A    7,5A    7,4A    7,3A    7,2A    7,1B                                                                    
+                                                                                                                                                
+1.Book Ticket                                                                                                                                   
+2.Cancel Booking                                                                                                                                
+3.EXIT                                                                                                                                          
+Enter your choice : 1                                                                                                                           
+                                                                                                                                                
+Enter row and column you want to book : 3 2                                                                                                     
+1,10A   1,9A    1,8A    1,7A    1,6A    1,5A    1,4A    1,3A    1,2A    1,1B                                                                    
+2,10A   2,9A    2,8A    2,7A    2,6A    2,5A    2,4A    2,3A    2,2B    2,1A                                                                    
+3,10A   3,9A    3,8A    3,7A    3,6A    3,5A    3,4A    3,3B    3,2B    3,1A                                                                    
+4,10B   4,9A    4,8A    4,7A    4,6A    4,5A    4,4B    4,3A    4,2A    4,1A                                                                    
+5,10A   5,9B    5,8A    5,7A    5,6A    5,5B    5,4B    5,3A    5,2A    5,1A                                                                    
+6,10A   6,9A    6,8B    6,7B    6,6B    6,5A    6,4A    6,3A    6,2A    6,1A                                                                    
+7,10A   7,9A    7,8A    7,7B    7,6A    7,5A    7,4A    7,3A    7,2A    7,1B                                                                    
+                                                                                                                                                
+1.Book Ticket                                                                                                                                   
+2.Cancel Booking                                                                                                                                
+3.EXIT                                                                                                                                          
+Enter your choice : 1
+                                                                                                                                                
+Enter row and column you want to book : 6 4                                                                                                     
+1,10A   1,9A    1,8A    1,7A    1,6A    1,5A    1,4A    1,3A    1,2A    1,1B                                                                    
+2,10A   2,9A    2,8A    2,7A    2,6A    2,5A    2,4A    2,3A    2,2B    2,1A                                                                    
+3,10A   3,9A    3,8A    3,7A    3,6A    3,5A    3,4A    3,3B    3,2B    3,1A                                                                    
+4,10B   4,9A    4,8A    4,7A    4,6A    4,5A    4,4B    4,3A    4,2A    4,1A                                                                    
+5,10A   5,9B    5,8A    5,7A    5,6A    5,5B    5,4B    5,3A    5,2A    5,1A                                                                    
+6,10A   6,9A    6,8B    6,7B    6,6B    6,5A    6,4B    6,3A    6,2A    6,1A                                                                    
+7,10A   7,9A    7,8A    7,7B    7,6A    7,5A    7,4A    7,3A    7,2A    7,1B                                                                    
+                                                                                                                                                
+1.Book Ticket                                                                                                                                   
+2.Cancel Booking                                                                                                                                
+3.EXIT                                                                                                                                          
+Enter your choice : 1                                                                                                                           
+                                                                                                                                                
+Enter row and column you want to book : 1 10                                                                                                    
+1,10B   1,9A    1,8A    1,7A    1,6A    1,5A    1,4A    1,3A    1,2A    1,1B                                                                    
+2,10A   2,9A    2,8A    2,7A    2,6A    2,5A    2,4A    2,3A    2,2B    2,1A                                                                    
+3,10A   3,9A    3,8A    3,7A    3,6A    3,5A    3,4A    3,3B    3,2B    3,1A                                                                    
+4,10B   4,9A    4,8A    4,7A    4,6A    4,5A    4,4B    4,3A    4,2A    4,1A                                                                    
+5,10A   5,9B    5,8A    5,7A    5,6A    5,5B    5,4B    5,3A    5,2A    5,1A                                                                    
+6,10A   6,9A    6,8B    6,7B    6,6B    6,5A    6,4B    6,3A    6,2A    6,1A                                                                    
+7,10A   7,9A    7,8A    7,7B    7,6A    7,5A    7,4A    7,3A    7,2A    7,1B                                                                    
+                                                                                                                                                
+1.Book Ticket                                                                                                                                   
+2.Cancel Booking                                                                                                                                
+3.EXIT                                                                                                                                          
+Enter your choice : 1                                                                                                                           
+                                                                                                                                                
+Enter row and column you want to book : 5 5                                                                                                     
+                                                                                                                                                
+SORRY !! Seat already booked.
+1,10B   1,9A    1,8A    1,7A    1,6A    1,5A    1,4A    1,3A    1,2A    1,1B                                                                    
+2,10A   2,9A    2,8A    2,7A    2,6A    2,5A    2,4A    2,3A    2,2B    2,1A                                                                    
+3,10A   3,9A    3,8A    3,7A    3,6A    3,5A    3,4A    3,3B    3,2B    3,1A                                                                    
+4,10B   4,9A    4,8A    4,7A    4,6A    4,5A    4,4B    4,3A    4,2A    4,1A                                                                    
+5,10A   5,9B    5,8A    5,7A    5,6A    5,5B    5,4B    5,3A    5,2A    5,1A                                                                    
+6,10A   6,9A    6,8B    6,7B    6,6B    6,5A    6,4B    6,3A    6,2A    6,1A                                                                    
+7,10A   7,9A    7,8A    7,7B    7,6A    7,5A    7,4A    7,3A    7,2A    7,1B                                                                    
+                                                                                                                                                
+1.Book Ticket                                                                                                                                   
+2.Cancel Booking                                                                                                                                
+3.EXIT                                                                                                                                          
+Enter your choice : 2                                                                                                                           
+                                                                                                                                                
+Enter row and column to cancel booking : 1 1                                                                                                    
+1,10B   1,9A    1,8A    1,7A    1,6A    1,5A    1,4A    1,3A    1,2A    1,1A                                                                    
+2,10A   2,9A    2,8A    2,7A    2,6A    2,5A    2,4A    2,3A    2,2B    2,1A                                                                    
+3,10A   3,9A    3,8A    3,7A    3,6A    3,5A    3,4A    3,3B    3,2B    3,1A                                                                    
+4,10B   4,9A    4,8A    4,7A    4,6A    4,5A    4,4B    4,3A    4,2A    4,1A                                                                    
+5,10A   5,9B    5,8A    5,7A    5,6A    5,5B    5,4B    5,3A    5,2A    5,1A                                                                    
+6,10A   6,9A    6,8B    6,7B    6,6B    6,5A    6,4B    6,3A    6,2A    6,1A                                                                    
+7,10A   7,9A    7,8A    7,7B    7,6A    7,5A    7,4A    7,3A    7,2A    7,1B                                                                    
+                                                                                                                                                
+1.Book Ticket                                                                                                                                   
+2.Cancel Booking                                                                                                                                
+3.EXIT                                                                                                                                          
+Enter your choice : 2                                                                                                                           
+                                                                                                                                                
+Enter row and column to cancel booking : 1 1                                                                                                    
+                                                                                                                                                
+SORRY !! Seat already unbooked.
+1,10B   1,9A    1,8A    1,7A    1,6A    1,5A    1,4A    1,3A    1,2A    1,1A                                                                    
+2,10A   2,9A    2,8A    2,7A    2,6A    2,5A    2,4A    2,3A    2,2B    2,1A                                                                    
+3,10A   3,9A    3,8A    3,7A    3,6A    3,5A    3,4A    3,3B    3,2B    3,1A                                                                    
+4,10B   4,9A    4,8A    4,7A    4,6A    4,5A    4,4B    4,3A    4,2A    4,1A                                                                    
+5,10A   5,9B    5,8A    5,7A    5,6A    5,5B    5,4B    5,3A    5,2A    5,1A                                                                    
+6,10A   6,9A    6,8B    6,7B    6,6B    6,5A    6,4B    6,3A    6,2A    6,1A                                                                    
+7,10A   7,9A    7,8A    7,7B    7,6A    7,5A    7,4A    7,3A    7,2A    7,1B                                                                    
+                                                                                                                                                
+1.Book Ticket                                                                                                                                   
+2.Cancel Booking                                                                                                                                
+3.EXIT                                                                                                                                          
+Enter your choice : 3
+
+
+
+...Program finished with exit code 0                                                                                                            
+Press ENTER to exit console.  
